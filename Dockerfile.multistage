@@ -1,0 +1,28 @@
+# ==========================================
+# Stage 1: Build Stage
+# ==========================================
+FROM golang:1.26 AS builder
+
+WORKDIR /app
+
+COPY go.mod .
+COPY main.go .
+
+# Build a statically linked Go binary
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o app main.go
+
+
+# ==========================================
+# Stage 2: Runtime Stage
+# ==========================================
+FROM alpine:3.22
+
+WORKDIR /app
+
+# Copy only the compiled binary
+COPY --from=builder /app/app .
+
+EXPOSE 8080
+
+CMD ["./app"]
+
