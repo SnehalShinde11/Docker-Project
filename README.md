@@ -2,85 +2,28 @@
 
 ## 1. Project Overview
 
-The objective of this project is to understand how multi-stage Docker builds help create optimized and lightweight container images.
+This project demonstrates how to optimize Docker container images using **Multi-Stage Docker Builds** for a Golang backend application.
 
-In traditional Docker builds, build dependencies, compilers, and intermediate files can remain inside the final image, which increases image size and introduces unnecessary components into production environments.
+Three different Docker images are created and compared:
 
-Multi-stage Docker builds solve this problem by separating the build stage from the runtime stage. The application is compiled in one stage, and only the required application artifact is copied into a lightweight runtime image.
+- Traditional Docker Image
+- Multi-Stage Docker Image
+- Optimized Docker Image
 
-This project demonstrates how to build, run, and compare a traditional Golang Docker image with an optimized multi-stage Docker image.
+The objective is to reduce the final container image size while maintaining the same application functionality.
 
-The project is implemented using a **Golang backend application** running on a **GCP VM**.
+### Application Details
 
----
-
-## 2. Problem Statement
-
-Traditional Docker builds for Golang applications commonly use a full Golang image for both building and running the application.
-
-Although this approach is simple, the final image may contain:
-
-- Go compiler
-- Build tools
-- Source code
-- Go development dependencies
-- Intermediate build files
-- Other unnecessary components required only during compilation
-
-These components are not required when running the compiled application.
-
-A large production image can result in:
-
-- Increased storage requirements
-- Longer image transfer times
-- Increased deployment time
-- Larger attack surface
-- Unnecessary runtime dependencies
-
-The objective of this project is to optimize the Golang container image by using a **multi-stage Docker build**.
+- **Application:** Golang Backend
+- **Port:** `8080`
+- **Operating System:** Linux / Ubuntu
+- **Cloud Platform:** GCP
+- **Container Platform:** Docker
+- **Container Registry:** DockerHub
 
 ---
 
-## 3. Solution Approach
-
-The solution uses Docker multi-stage builds to separate the application build environment from the runtime environment.
-
-### Traditional Build
-
-```text
-Golang Source Code
-       ↓
-Golang Image
-       ↓
-Compile Application
-       ↓
-Final Image Contains
-Compiler + Build Tools + Binary
-```
-
-### Multi-Stage Build
-
-```text
-Golang Source Code
-       ↓
-Build Stage
-golang:1.26
-       ↓
-Compile Binary
-       ↓
-Runtime Stage
-alpine:3.22
-       ↓
-Copy Only Binary
-       ↓
-Optimized Final Image
-```
-
-The final image contains only the application binary and the minimal runtime environment required to execute it.
-
----
-
-## 4. Repository Structure
+## 2. Project Structure
 
 ```text
 Docker-Project/
@@ -93,154 +36,100 @@ Docker-Project/
 └── main.go
 ```
 
-### File Description
-
-| File | Description |
-|---|---|
-| `main.go` | Golang backend application |
-| `go.mod` | Go module definition |
-| `Dockerfile` | Traditional Docker build |
-| `Dockerfile.multistage` | Optimized multi-stage Docker build |
-| `Dockerfile.optimized` | Enhanced optimized Docker build using a minimal Alpine runtime image |
-| `Docker Project 1.1.docx` | Assignment/documentation material |
-
 ---
 
-## 5. Application Details
+## 3. Application Endpoints
 
-The Golang application is a simple backend service that listens on port `8080`.
-
-### Application Endpoints
-
-| Endpoint | Purpose |
-|---|---|
-| `/` | Returns the application demo message |
-| `/health` | Returns application health status |
-
-The application can be accessed using:
+The Golang application provides the following endpoints:
 
 ```text
-http://<GCP-VM-IP>:8080/
+http://localhost:8080/
+http://localhost:8080/health
 ```
 
-Health check:
+### Root Endpoint
 
 ```text
-http://<GCP-VM-IP>:8080/health
+This is application designed by Snehal for Demo Purpose
 ```
 
----
-
-## 6. Dependencies and Setup
-
-The project requires the following components.
-
-| Dependency | Purpose |
-|---|---|
-| GCP VM | Environment used to perform the hands-on implementation |
-| Ubuntu/Linux | Operating system for the GCP VM |
-| Go | Compile and run the Golang application |
-| Docker | Build and run container images |
-| Git | Version control |
-| GitHub | Store the project source code |
-
-### Install Go
-
-Update the package repository:
-
-```bash
-sudo apt update
-```
-
-Install Golang:
-
-```bash
-sudo apt install golang-go
-```
-
-Verify the installation:
-
-```bash
-go version
-```
-
-### Verify Docker
-
-```bash
-docker --version
-```
-
-If Docker is not installed, install Docker according to the operating system's Docker installation procedure.
-
-### Clone the Repository
-
-```bash
-git clone https://github.com/SnehalShinde11/Docker-Project.git
-```
-
-Navigate to the project directory:
-
-```bash
-cd Docker-Project
-```
-
----
-
-# 7. Execution Steps
-
-## Step 1 – Prepare the Golang Application
-
-Navigate to the project directory containing the application source code:
-
-```bash
-cd Docker-Project
-```
-
-Verify Go:
-
-```bash
-go version
-```
-
-Run the application:
-
-```bash
-go run main.go
-```
-
-The application starts on port:
-
-```text
-8080
-```
-
-Test the application:
-
-```bash
-curl http://localhost:8080/
-```
-
-Test the health endpoint:
-
-```bash
-curl http://localhost:8080/health
-```
-
-Expected response:
+### Health Endpoint
 
 ```text
 Application is healthy
 ```
 
-Stop the application after verification.
+---
+
+## 4. Solution Approach
+
+The project uses three different approaches to build the Docker image.
+
+### Traditional Docker Build
+
+The traditional approach uses the complete Golang base image for both building and running the application.
+
+This results in a larger final image because the image contains the Go compiler, build tools, dependencies, and other components that are not required during application runtime.
+
+### Multi-Stage Docker Build
+
+The multi-stage approach separates the application build process from the runtime environment.
+
+The application is compiled in a dedicated build stage, and only the compiled binary is copied into the final runtime image.
+
+### Optimized Docker Build
+
+The optimized approach uses a statically compiled Go binary and a lightweight Alpine Linux runtime image.
+
+Only the required application binary is included in the final runtime image.
+
+---
+
+## 5. Prerequisites
+
+The following tools are required:
+
+- Linux / Ubuntu system
+- Docker
+- DockerHub account
+- Internet connectivity
+
+Verify Docker installation:
+
+```bash
+docker --version
+```
+
+---
+
+# 6. Execution Steps
+
+## Step 1 – Prepare the Golang Application
+
+Clone the repository and navigate to the project directory.
+
+```bash
+git clone https://github.com/SnehalShinde11/Docker-Project.git
+cd Docker-Project
+```
+
+Verify the project files:
+
+```bash
+ls
+```
+
+Verify the application source:
+
+```bash
+cat main.go
+```
 
 ---
 
 ## Step 2 – Build the Traditional Docker Image
 
-The repository already contains the traditional `Dockerfile`.
-
-Build the Docker image using the existing file:
+Build the traditional Docker image using the existing project configuration.
 
 ```bash
 docker build -t golang-backend:traditional .
@@ -254,9 +143,9 @@ docker images
 
 ---
 
-## Step 3 – Run the Traditional Container
+## Step 3 – Run the Traditional Docker Container
 
-Run the traditional container:
+Run the traditional image:
 
 ```bash
 docker run -d \
@@ -265,7 +154,7 @@ docker run -d \
   golang-backend:traditional
 ```
 
-Verify the container:
+Verify the running container:
 
 ```bash
 docker ps
@@ -283,96 +172,34 @@ Test the health endpoint:
 curl http://localhost:8080/health
 ```
 
+Stop and remove the traditional container before proceeding:
+
+```bash
+docker stop golang-traditional
+docker rm golang-traditional
+```
+
 ---
 
 ## Step 4 – Build the Multi-Stage Docker Image
 
-The repository already contains the optimized `Dockerfile.multistage`.
-
-Build the multi-stage image using the existing file:
+Build the multi-stage Docker image using the existing `Dockerfile.multistage`.
 
 ```bash
 docker build -f Dockerfile.multistage -t golang-backend:multistage .
 ```
 
-The build process separates the compilation environment from the runtime environment.
-
-The build stage uses:
-
-```text
-golang:1.26
-```
-
-The runtime stage uses:
-
-```text
-alpine:3.22
-```
-
-Only the compiled application binary is included in the final runtime image.
-
-Verify both images:
-
-```bash
-docker images
-```
-
-The output should contain:
-
-```text
-golang-backend:traditional
-golang-backend:multistage
-```
-
----
- 
-## Step 5 – Build the Optimized Docker Image
-
-The repository contains the optimized `Dockerfile.optimized`.
-
-Build the optimized image:
-
-```bash
-docker build -f Dockerfile.optimized -t golang-backend:optimized .
-```
-
-The optimized Dockerfile uses a multi-stage build with a minimal `alpine:3.22` runtime image. The Go application is compiled as a statically linked binary, and only the compiled binary is copied into the runtime image.
-
-The application port is exposed through:
-
-```text
-8080
-```
-
-Verify the optimized image:
+Verify the image:
 
 ```bash
 docker images
 ```
 
 ---
- 
-## Step 6 – Remove the Traditional Container
 
-The traditional container is using port `8080`.
+## Step 5 – Run the Multi-Stage Docker Container
 
-Remove it before starting the optimized container:
-
-```bash
-docker rm -f golang-traditional
-```
-
-Verify:
-
-```bash
-docker ps
-```
-
----
-
-## Step 7 – Run the Optimized Multi-Stage Container
-
-Run the multi-stage container:
+Run the multi-stage image:
 
 ```bash
 docker run -d \
@@ -387,11 +214,65 @@ Verify the running container:
 docker ps
 ```
 
+Test the application:
+
+```bash
+curl http://localhost:8080/
+```
+
+Test the health endpoint:
+
+```bash
+curl http://localhost:8080/health
+```
+
+Stop and remove the multi-stage container before proceeding:
+
+```bash
+docker stop golang-multistage
+docker rm golang-multistage
+```
+
 ---
 
-## Step 8 – Verify the Application
+## Step 6 – Build the Optimized Docker Image
 
-Test the main endpoint:
+Build the optimized image using `Dockerfile.optimized`.
+
+```bash
+docker build -f Dockerfile.optimized -t golang-backend:optimized .
+```
+
+Verify the image:
+
+```bash
+docker images
+```
+
+---
+
+## Step 7 – Run the Optimized Docker Container
+
+Run the optimized image:
+
+```bash
+docker run -d \
+  --name golang-optimized \
+  -p 8080:8080 \
+  golang-backend:optimized
+```
+
+Verify the running container:
+
+```bash
+docker ps
+```
+
+---
+
+## Step 8 – Verify the Optimized Application
+
+Test the root endpoint:
 
 ```bash
 curl http://localhost:8080/
@@ -409,133 +290,148 @@ Expected response:
 Application is healthy
 ```
 
-Check the container logs:
+---
+
+## Step 9 – Compare All Three Image Sizes
+
+List all three images:
 
 ```bash
-docker logs golang-multistage
+docker images | grep golang-backend
 ```
 
----
-
-## Step 9 – Compare Image Sizes
-
-Display the Docker images:
+The images can also be inspected individually:
 
 ```bash
-docker images
+docker image ls golang-backend:traditional
+docker image ls golang-backend:multistage
+docker image ls golang-backend:optimized
 ```
 
-Compare:
+### Image Size Comparison
 
-```text
-golang-backend:traditional
-golang-backend:multistage
-```
+| Image | Build Type | Approximate Size |
+|---|---|---:|
+| `golang-backend:traditional` | Traditional | ~339 MB |
+| `golang-backend:multistage` | Multi-Stage | ~8.45 MB |
+| `golang-backend:optimized` | Optimized | To be measured |
 
-| Image | Approximate Size |
-|---|---:|
-| Traditional Image | 339 MB |
-| Multi-Stage Image | 8.45 MB |
-| Optimized Image | To be measured after optimized build |
-
-The multi-stage image is significantly smaller because the final image contains only the compiled application binary and the lightweight Alpine runtime environment.
+The optimized image size should be recorded after completing the optimized build.
 
 ---
 
-## Step 11 – Verify Container Status
+## Step 10 – Push Images to DockerHub
 
-Check the running container:
+### General Command Syntax
+
+Tag a local Docker image for DockerHub:
 
 ```bash
-docker ps
+docker tag <local-image>:<tag> <dockerhub-username>/<repository>:<tag>
 ```
 
-Expected container:
-
-```text
-golang-multistage
-```
-
-Check logs:
+Login to DockerHub:
 
 ```bash
-docker logs golang-multistage
+docker login
 ```
 
-The application should indicate that the Go backend is running on port `8080`.
+Push the image:
+
+```bash
+docker push <dockerhub-username>/<repository>:<tag>
+```
+
+### Reference – Commands Used in This Project
+
+Tag the three images:
+
+```bash
+docker tag golang-backend:optimized snehalshinde11/golang-backend:optimized
+docker tag golang-backend:multistage snehalshinde11/golang-backend:multistage
+docker tag golang-backend:traditional snehalshinde11/golang-backend:traditional
+```
+
+Login to DockerHub:
+
+```bash
+docker login
+```
+
+Push the images:
+
+```bash
+docker push snehalshinde11/golang-backend:optimized
+docker push snehalshinde11/golang-backend:multistage
+docker push snehalshinde11/golang-backend:traditional
+```
 
 ---
 
-## 8. Traditional vs Multi-Stage Build
+# 7. Traditional vs Multi-Stage vs Optimized
 
-| Feature | Traditional Build | Multi-Stage Build |
-|---|---|---|
-| Build Image | `golang:1.26` | `golang:1.26` |
-| Runtime Image | `golang:1.26` | `alpine:3.22` |
-| Go Compiler in Final Image | Yes | No |
-| Build Dependencies in Final Image | Yes | No |
-| Application Binary | Yes | Yes |
-| Image Size | ~339 MB | ~8.45 MB |
-| Deployment Efficiency | Lower | Higher |
-| Production Optimization | Limited | Better |
-
----
-
-## 9. Benefits of Multi-Stage Docker Builds
-
-### Smaller Container Images
-
-Only the required application artifact is included in the final image.
-
-### Faster Deployment
-
-Smaller images can be transferred and deployed faster.
-
-### Reduced Storage
-
-The container registry and host require less storage space.
-
-### Improved Security
-
-Removing unnecessary build tools and dependencies reduces the attack surface.
-
-### Better Production Readiness
-
-The runtime image contains only what is required to execute the application.
-
-### Separation of Responsibilities
-
-The build environment and runtime environment are clearly separated.
+| Feature | Traditional | Multi-Stage | Optimized |
+|---|---|---|---|
+| Build Stage | Included | Separate | Separate |
+| Runtime Image | Golang | Alpine | Alpine |
+| Go Compiler in Runtime | Yes | No | No |
+| Static Binary | No | Yes | Yes |
+| Final Image Size | Large | Small | Small |
+| Build Optimization | Low | High | High |
+| Runtime Components | More | Minimal | Minimal |
 
 ---
 
-## 10. Conclusion
+# 8. Benefits of Multi-Stage Builds
 
-This project demonstrates how Docker multi-stage builds can be used to optimize Golang container images.
+Multi-stage Docker builds provide several advantages:
 
-The traditional Docker build uses a full Golang image for both compilation and runtime, resulting in a significantly larger image.
-
-The multi-stage Docker build separates the compilation process from the runtime environment. The application is compiled in the `golang:1.26` build stage, while only the compiled binary is copied into the lightweight `alpine:3.22` runtime stage.
-
-As a result, the final image is significantly smaller and more efficient while continuing to provide the same application functionality.
-
-This approach is useful for creating lightweight, efficient, and production-ready container images.
+- Significantly reduce final image size
+- Remove unnecessary build tools from the runtime image
+- Improve container startup and deployment efficiency
+- Reduce the container attack surface
+- Improve image transfer speed
+- Keep build and runtime environments separate
+- Produce lightweight production-ready containers
 
 ---
 
-## 12. Project Details
+# 9. Conclusion
 
-**Assignment:** Project 2.1 – Optimizing Container Images using Multi-Stage Docker Builds
+This project demonstrates the difference between traditional and optimized Docker image creation.
 
-**Name:** Snehal Shinde
+The traditional image contains the complete Golang environment and is significantly larger.
 
-**GitHub Repository:**  
-https://github.com/SnehalShinde11/Docker-Project
+The multi-stage approach separates the build environment from the runtime environment and copies only the required compiled binary into a lightweight Alpine image.
 
-**Branch:** `master`
+The optimized image follows the same lightweight runtime principle and provides an efficient container suitable for deployment.
 
-**Environment:** GCP VM
+The final image sizes are compared, and all three images are tagged and pushed to DockerHub for image distribution and reuse.
 
-**Application:** Golang Backend Service
+---
+
+# 10. Project Details
+
+**Project:** Optimizing Container Images using Multi-Stage Docker Builds
+
+**Application:** Golang Backend
 
 **Application Port:** `8080`
+
+**Cloud Environment:** GCP VM
+
+**Container Platform:** Docker
+
+**Registry:** DockerHub
+
+**DockerHub Repository:**
+
+```text
+snehalshinde11/golang-backend
+```
+
+**GitHub Repository:**
+
+```text
+https://github.com/SnehalShinde11/Docker-Project
+```
