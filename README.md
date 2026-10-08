@@ -88,6 +88,7 @@ Docker-Project/
 ├── Docker Project 1.1.docx
 ├── Dockerfile
 ├── Dockerfile.multistage
+├── Dockerfile.optimized
 ├── go.mod
 └── main.go
 ```
@@ -100,6 +101,7 @@ Docker-Project/
 | `go.mod` | Go module definition |
 | `Dockerfile` | Traditional Docker build |
 | `Dockerfile.multistage` | Optimized multi-stage Docker build |
+| `Dockerfile.optimized` | Enhanced optimized Docker build using a minimal Alpine runtime image |
 | `Docker Project 1.1.docx` | Assignment/documentation material |
 
 ---
@@ -323,8 +325,34 @@ golang-backend:multistage
 ```
 
 ---
+ 
+## Step 5 – Build the Optimized Docker Image
 
-## Step 5 – Remove the Traditional Container
+The repository contains the optimized `Dockerfile.optimized`.
+
+Build the optimized image:
+
+```bash
+docker build -f Dockerfile.optimized -t golang-backend:optimized .
+```
+
+The optimized Dockerfile uses a multi-stage build with a minimal `alpine:3.22` runtime image. The Go application is compiled as a statically linked binary, and only the compiled binary is copied into the runtime image.
+
+The application port is exposed through:
+
+```text
+8080
+```
+
+Verify the optimized image:
+
+```bash
+docker images
+```
+
+---
+ 
+## Step 6 – Remove the Traditional Container
 
 The traditional container is using port `8080`.
 
@@ -342,7 +370,7 @@ docker ps
 
 ---
 
-## Step 6 – Run the Optimized Multi-Stage Container
+## Step 7 – Run the Optimized Multi-Stage Container
 
 Run the multi-stage container:
 
@@ -361,7 +389,7 @@ docker ps
 
 ---
 
-## Step 7 – Verify the Application
+## Step 8 – Verify the Application
 
 Test the main endpoint:
 
@@ -389,7 +417,7 @@ docker logs golang-multistage
 
 ---
 
-## Step 8 – Compare Image Sizes
+## Step 9 – Compare Image Sizes
 
 Display the Docker images:
 
@@ -408,12 +436,13 @@ golang-backend:multistage
 |---|---:|
 | Traditional Image | 339 MB |
 | Multi-Stage Image | 8.45 MB |
+| Optimized Image | To be measured after optimized build |
 
 The multi-stage image is significantly smaller because the final image contains only the compiled application binary and the lightweight Alpine runtime environment.
 
 ---
 
-## Step 9 – Verify Container Status
+## Step 11 – Verify Container Status
 
 Check the running container:
 
@@ -494,7 +523,7 @@ This approach is useful for creating lightweight, efficient, and production-read
 
 ---
 
-## 11. Project Details
+## 12. Project Details
 
 **Assignment:** Project 2.1 – Optimizing Container Images using Multi-Stage Docker Builds
 
